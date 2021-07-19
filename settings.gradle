@@ -1,0 +1,4 @@
+include ':lib_common'
+include ':lib_splashscreen'
+include ':app'
+rootProject.name = "JMusic"

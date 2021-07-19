@@ -1,0 +1,79 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+//    compileSdkVersion 30
+//    buildToolsVersion "30.0.3"
+//
+//    defaultConfig {
+//        applicationId "com.jmusic"
+//        minSdkVersion 26
+//        targetSdkVersion 30
+//        versionCode 1
+//        versionName "1.0"
+//
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//    }
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        applicationId rootProject.ext.android.applicationId
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation project(":lib_common")
+    annotationProcessor  "com.jakewharton:butterknife-compiler:10.1.0"
+    annotationProcessor 'com.alibaba:arouter-compiler:1.5.1'
+    implementation 'com.android.volley:volley:1.2.0'
+    if (!rootProject.ext.isApp){
+        implementation project(":lib_splashscreen")
+//        implementation project(":lib_home")
+//        implementation project(":lib_base")
+    }
+    //下拉刷新
+//    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation  'com.scwang.smart:refresh-layout-kernel:2.0.3'      //核心必须依赖
+    implementation  'com.scwang.smart:refresh-header-classics:2.0.3'    //经典刷新头
+    //播放url格式的网络音频，支持缓存.
+    implementation 'com.alex:SPlayer:1.0.4'
+    //歌词显示
+    compile 'com.github.zhengken:LyricViewDemo:v1.2'
+    implementation 'com.github.Lauzy:LyricView:1.0.4'
+    //进度条
+//    implementation 'cn.bingoogolapple:bga-progressbar:1.0.0@aar'
+    implementation 'com.github.zhouzhuo810:ZzHorizontalProgressBar:1.1.1'
+
+}

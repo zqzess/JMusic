@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lib_splashscreen">
+
+    <application android:theme="@style/Theme.SplashScreen">
+        <activity android:name="com.lib_splashscreen.SplashScreenActivity"/>
+    </application>
+
+</manifest>

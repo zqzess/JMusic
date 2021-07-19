@@ -1,0 +1,29 @@
+ext {
+    isApp = false//#true作为app(使用debug/androidmanifest.xml)   false作为library
+    //android 相关配置
+    android = [
+            applicationId          : 'com.jmusic',
+            compileSdkVersion      : 30,
+            buildToolsVersion      : '30.0.3',
+            minSdkVersion          : 23,
+            targetSdkVersion       : 30,
+            versionCode            : 1,
+            versionName            : '1.0',
+
+            //组件applicationid
+            lib_login_applicationId: 'com.lib_splashscreen',//登录模块
+//            lib_home_applicationId: 'com.daway.lib_home',//主页模块
+//            lib_base_applicationId: 'com.daway.lib_base',//基础模块
+    ]
+    //库相关
+    depsLibs = [
+            //androidx相关
+            appcompat       : 'androidx.appcompat:appcompat:1.2.0',
+            constraintlayout: 'androidx.constraintlayout:constraintlayout:2.0.2',
+            junit           : 'junit:junit:4.12',
+            ext             : 'androidx.test.ext:junit:1.1.2',
+            espresso        : 'androidx.test.espresso:espresso-core:3.3.0',
+
+
+    ]
+}
