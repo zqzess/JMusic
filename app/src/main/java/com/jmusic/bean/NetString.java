@@ -1,4 +1,4 @@
-package com.lib_common.bean;
+package com.jmusic.bean;
 
 public class NetString {
     private static String hostName="http://bd-api.kuwo.cn";

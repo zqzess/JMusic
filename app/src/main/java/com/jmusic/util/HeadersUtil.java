@@ -7,6 +7,7 @@ import java.util.Map;
 public class HeadersUtil {
     public static Map<String, String> MUSICINFO=new HashMap<String,String>();
     public static Map<String, String> MUSICURL=new HashMap<String,String>();
+    public static Map<String, String> MUSICGZIP =new HashMap<String,String>();
 
     public static void headersInit()
     {
@@ -44,7 +45,7 @@ public class HeadersUtil {
         MUSICURL.put("channel","appstore");//fake channel
         MUSICURL.put("plat","ip");
         MUSICURL.put("Accept-Language","zh-cn");
-//        MUSICURL.put("Accept-Encoding","gzip, deflate");
+        MUSICURL.put("Accept-Encoding","gzip, deflate");
         MUSICURL.put("devid","65D7A354-5t7A-4737-914E-9C8BA6JKFE4A");//fake devid
         MUSICURL.put("ver","1.2.3");
         MUSICURL.put("Cache-Control","no-cache");
@@ -54,6 +55,24 @@ public class HeadersUtil {
         MUSICURL.put("Accept","*/*");
 
 
+        /**
+         * 获取音乐信息 gzip
+         *
+         *
+         **/
+        MUSICGZIP.clear();
+        MUSICGZIP.put("user-agent","Dart/2.10 (dart:io)");
+        MUSICGZIP.put("appuid","123849114429"); //fake appuid
+        MUSICGZIP.put("plat","ar");
+        MUSICGZIP.put("devid","da1987619a07n9ya");//fake devid
+        MUSICGZIP.put("accept-encoding","gzip");//fake devid
+        MUSICGZIP.put("ver","1.1.9");
+        MUSICGZIP.put("brand","huawei mate40");//fake brand
+        MUSICGZIP.put("channel","huawei");//fake channel
+        MUSICGZIP.put("content-length","0");
+        MUSICGZIP.put("api-ver","application/json");
+        MUSICGZIP.put("net","mobile");
+        MUSICGZIP.put("host","bd-api.kuwo.cn");
 
     }
 

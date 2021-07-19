@@ -27,26 +27,41 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:padding="5dp"
+            android:gravity="center"
             android:background="@drawable/radius_80_darker_gray">
             <ImageView
+                android:id="@+id/main_iv_pic"
                 android:layout_marginRight="5dp"
                 android:layout_width="30dp"
                 android:layout_height="30dp"/>
             <TextView
+                android:id="@+id/main_click"
                 android:paddingRight="5dp"
                 android:paddingLeft="5dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="30dp"/>
-/>          <com.guogali.progressbuttonlibrary.ProgressButton
+                android:layout_height="30dp"
+                android:textSize="14sp"/>
+          <com.guogali.progressbuttonlibrary.ProgressButton
+              android:id="@+id/main_btn_play"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
                 android:paddingLeft="5dp"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 app:bgColor="@color/white"
-                app:progressColor="@color/white"
+                app:progressColor="@color/holo_blue_bright"
                 app:centerColor="@color/white"
                 app:viewRoundWidth="4dp"/>
+            <TextView
+                android:id="@+id/main_tv_btn_next"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:gravity="center"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@drawable/ic_next_white"/>
         </LinearLayout>
         <!-- 底部菜单栏 -->
         <TabWidget

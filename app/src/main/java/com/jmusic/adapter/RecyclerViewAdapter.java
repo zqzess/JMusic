@@ -138,7 +138,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 ivImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.PLAYINFO,dataList.get(position).getId()));
+                        EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.PLAYINFO,dataList.get(position)));
                         ARouter.getInstance().build(Constance.ACTIVITY_URL_PLAYMUSIC)
                                 .withTransition(R.anim.slide_in_right,R.anim.slide_out_right)
                                 .navigation();

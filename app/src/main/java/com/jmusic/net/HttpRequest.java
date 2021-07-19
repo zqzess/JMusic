@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class HttpRequest {
 
+    //TODO 从推荐页请求获取歌曲信息
     public static ArrayList netGetMusicInfo(Context context,String url,String errMsg)
     {
         ArrayList<MusicInfo> dataList = new ArrayList<>();
@@ -69,6 +70,7 @@ public class HttpRequest {
         return dataList;
     }
 
+    //TODO 解析歌曲信息
     public static ArrayList getMusicInfoData(JSONObject response)
     {
         ArrayList<MusicInfo> dataList = new ArrayList<>();
@@ -91,6 +93,34 @@ public class HttpRequest {
                     String releaseDate = object.getString("releaseDate");
                     int isMv = object.getInt("isMv");
                     Log.d("debug-data", id + "  " + name + "  " + albumPic);
+                    if(name.isEmpty())
+                    {
+                        name="";
+                    }
+                    if(album.isEmpty())
+                    {
+                        album="";
+                    }
+                    if(albumPic.isEmpty())
+                    {
+                        albumPic="";
+                    }
+                    if(albumPic120.isEmpty())
+                    {
+                        albumPic120="";
+                    }
+                    if(artist.isEmpty())
+                    {
+                        artist="";
+                    }
+                    if(artistPic.isEmpty())
+                    {
+                        artistPic="";
+                    }
+                    if(releaseDate.isEmpty())
+                    {
+                        releaseDate="";
+                    }
                     MusicInfo musicInfo = new MusicInfo(id, name, albumId, album, albumPic, albumPic120, artist, artistId, artistPic, duration, releaseDate, isMv);
                     dataList.add(musicInfo);
                 }
@@ -103,6 +133,7 @@ public class HttpRequest {
         return dataList;
     }
 
+    //TODO 请求获取歌词
     public static void netGetLyrc(Context context,String url,long musicId,String errMsg)
     {
         HttpRequestManage.jsonRequest(url, HeadersUtil.MUSICINFO, new Response.Listener<JSONObject>() {
@@ -141,6 +172,7 @@ public class HttpRequest {
 
     }
 
+    //TODO 歌词保存至文件
     private static  void saveToFile(String inputText,Context context,long id){
         FileOutputStream fos =null;
         BufferedWriter writer = null;
@@ -165,6 +197,7 @@ public class HttpRequest {
 
     }
 
+    //TODO 歌曲链接获取
     public static void netGetAudioUrl(Context context,String url,long musicId,String errMsg)
     {
         HttpRequestManage.jsonRequest(url, HeadersUtil.MUSICURL, new Response.Listener<JSONObject>() {
@@ -178,7 +211,77 @@ public class HttpRequest {
                     if(!audioUrl.isEmpty())
                     {
                         mCache.put("audiourl&"+musicId,audioUrl);
-                        Log.d("歌曲链接",audioUrl);
+//                        Log.d("歌曲链接",audioUrl);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context,errMsg,Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    //TODO请求获取歌词gzip
+    public static void netGetLyrcGzip(Context context,String url,long musicId,String errMsg)
+    {
+        HttpRequestManage.gzipRequest(url, HeadersUtil.MUSICGZIP, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+                    String msg=jsonObject.getString("msg");
+                    JSONObject data=jsonObject.getJSONObject("data");
+                    String lyrcBase64=data.getString("content");
+                    String lyrcContent;
+                    ACache mCache=ACache.get(context);
+                    if(!lyrcBase64.isEmpty())
+                    {
+                        lyrcContent=Base64Utils.decodeToString(lyrcBase64);
+//                        SharedPreferencesUtil.put(context,"id&"+musicId,lyrcContent,"id&"+musicId);
+                        mCache.put("lyrc&"+musicId,musicId);
+                        saveToFile(lyrcContent,context,musicId);
+//                        Log.d("歌词","歌曲id:"+musicId+"\n"+lyrcContent);
+                    }else
+                    {
+                        lyrcContent="纯音乐,暂无歌词";
+//                        SharedPreferencesUtil.put(context,"id&"+musicId,lyrcContent,"id&"+musicId);
+                        mCache.put("lyrc&"+musicId,musicId);
+                        saveToFile(lyrcContent,context,musicId);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context,errMsg,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    //TODO 歌曲链接获取
+    public static void netGetAudioUrlGzip(Context context,String url,long musicId,String errMsg)
+    {
+        HttpRequestManage.gzipRequest(url, HeadersUtil.MUSICURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+                    String msg=jsonObject.getString("msg");
+                    JSONObject data=jsonObject.getJSONObject("data");
+                    String audioUrl=data.getString("audioUrl");
+                    ACache mCache=ACache.get(context);
+                    if(!audioUrl.isEmpty())
+                    {
+                        mCache.put("audiourl&"+musicId,audioUrl);
+//                        Log.d("歌曲链接",audioUrl);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

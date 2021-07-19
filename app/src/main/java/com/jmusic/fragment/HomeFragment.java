@@ -29,7 +29,7 @@ import com.jmusic.bean.MusicInfo;
 import com.jmusic.util.HeadersUtil;
 import com.jmusic.net.HttpRequest;
 import com.lib_common.bean.Constance;
-import com.lib_common.bean.NetString;
+import com.jmusic.bean.NetString;
 import com.lib_common.net.HttpRequestManage;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -37,6 +37,7 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.constant.SpinnerStyle;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -116,17 +117,23 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
                 // 执行你的耗时操作代码
-                HttpRequestManage.jsonRequest(NetString.musicRecommend, HeadersUtil.MUSICINFO, new Response.Listener<JSONObject>() {
+                HttpRequestManage.gzipRequest(NetString.musicRecommend, HeadersUtil.MUSICGZIP, new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response) {
+                        JSONObject jsonObject= null;
+                        try {
+                            jsonObject = new JSONObject(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         if(dataList.isEmpty())
                         {
-                            dataList=HttpRequest.getMusicInfoData(response);
+                            dataList=HttpRequest.getMusicInfoData(jsonObject);
                             adapter.replaceAll(dataList);
                         }else
                         {
-                            dataList.addAll(HttpRequest.getMusicInfoData(response));
-                            adapter.addData(adapter.getItemCount(),HttpRequest.getMusicInfoData(response));
+                            dataList.addAll(HttpRequest.getMusicInfoData(jsonObject));
+                            adapter.addData(adapter.getItemCount(),HttpRequest.getMusicInfoData(jsonObject));
                         }
 
                     }

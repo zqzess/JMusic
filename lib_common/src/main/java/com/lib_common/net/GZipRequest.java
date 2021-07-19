@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 
@@ -16,14 +15,16 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-public class GZipRequest extends Request<String> {
+public class GZipRequest extends StringRequest {
     private final Response.Listener<String> mListener;
     private final Map<String, String> headers;
-    public GZipRequest(int method, String url, Map<String, String> headers, Response.Listener<String> mListener,@Nullable Response.ErrorListener listener) {
-        super(method, url, listener);
-        this.mListener = mListener;
+
+    public GZipRequest(int method, String url, Map<String, String> headers, Response.Listener<String> listener, @Nullable Response.ErrorListener errorListener) {
+        super(method, url, headers, listener, errorListener);
+        this.mListener=listener;
         this.headers=headers;
     }
+
 
     @Override
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
@@ -52,7 +53,7 @@ public class GZipRequest extends Request<String> {
 
     @Override
     protected void deliverResponse(String response) {
-
+        mListener.onResponse(response);
     }
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {

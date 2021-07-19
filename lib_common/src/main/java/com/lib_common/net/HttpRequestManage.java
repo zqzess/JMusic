@@ -28,4 +28,5 @@ public class HttpRequestManage {
         GZipRequest request=new GZipRequest(Request.Method.GET,links,headers,mlistener,errorListener);
         VolleyRequestQueueManager.mRequestQueue.add(request);
     }
+
 }

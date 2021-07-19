@@ -29,7 +29,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 // 启动登录窗口
                 ARouter.getInstance().build(Constance.ACTIVITY_URL_MAINFRAGMENT).withTransition(R.anim.fade_in, R.anim.fade_out).navigation();
                 // 关闭启动画面
-//                finish();//启动后销毁自身
+                finish();//启动后销毁自身
             }
         }, DELAY_TIME);
     }
