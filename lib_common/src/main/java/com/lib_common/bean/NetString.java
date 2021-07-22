@@ -1,5 +1,7 @@
 package com.jmusic.bean;
 
+import java.net.URLEncoder;
+
 public class NetString {
     private static String hostName="http://bd-api.kuwo.cn";
 
@@ -46,6 +48,10 @@ public class NetString {
 //    public static String audioUrl=hostName+"/api/service/music/audioUrl";
     public static String audioUrl;
 
+    //搜索
+    // http://bd-api.kuwo.cn/api/search/comprehensive/list?pn=0&rn=20&keyword=%E6%98%9F%E8%BE%B0%E5%A4%A7%E6%B5%B7&uid=908709&token=1770ba42656eed97ee07bbf8a2656d9b HTTP/1.1
+    public static String searchUrl;
+
     public static String getMusicLyric() {
         return musicLyric;
     }
@@ -60,5 +66,20 @@ public class NetString {
 
     public static void setAudioUrl(String audioUrl) {
         NetString.audioUrl = hostName+"/api/service/music/audioUrl"+audioUrl;
+    }
+
+    public static String getSearchUrl() {
+        return searchUrl;
+    }
+
+    public static void setSearchUrl(String searchUrl) {
+        String keyword="%E6%98%9F%E8%BE%B0%E5%A4%A7%E6%B5%B7";
+        try{
+            keyword = URLEncoder.encode(searchUrl,"utf-8");
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        NetString.searchUrl = hostName+"/api/search/comprehensive/list?pn=0&rn=20&keyword="+keyword+"&uid=-1&token= HTTP/1.1";
     }
 }

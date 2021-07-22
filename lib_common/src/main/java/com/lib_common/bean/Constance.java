@@ -1,4 +1,4 @@
-package com.lib_common.bean;
+package com.jmusic.bean;
 
 public class Constance {
     public static final String ACTIVITY_URL_MAINFRAGMENT = "/app/FragmentInitActivity";
@@ -7,6 +7,7 @@ public class Constance {
     public static final String FRAGMENT_URL_PLAY = "/app/PlayFragment";
     public static final String FRAGMENT_URL_ME = "/app/MineFragment";
     public static final String ACTIVITY_URL_PLAYMUSIC = "/app/PlayMusicActivity";
+    public static final String ACTIVITY_URL_SEARCH = "/app/SearchActivity";
 
 
 }

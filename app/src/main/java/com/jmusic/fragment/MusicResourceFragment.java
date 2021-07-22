@@ -26,9 +26,18 @@ public class PlayFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_musicsource, container, false);
         activity=this.getActivity();
         searchBar=(SearchBar)view.findViewById(R.id.music_search_bar);
         return view;
+    }
+    void initView()
+    {
+        searchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 }
