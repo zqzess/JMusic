@@ -2,6 +2,7 @@ package com.lib_common.net;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
@@ -26,6 +27,10 @@ public class HttpRequestManage {
     public static void gzipRequest(String links, Map<String, String> headers, Response.Listener<String> mlistener, Response.ErrorListener errorListener)
     {
         GZipRequest request=new GZipRequest(Request.Method.GET,links,headers,mlistener,errorListener);
+        VolleyRequestQueueManager.mRequestQueue.add(request);
+    }
+    public static void getJSONObject(String links, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, links, null, listener, errorListener);
         VolleyRequestQueueManager.mRequestQueue.add(request);
     }
 

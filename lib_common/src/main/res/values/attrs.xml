@@ -1,2 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <declare-styleable name="ProgressButton">
+        <attr name="bgColor" format="color"/>
+        <attr name="progressColor" format="color"/>
+        <attr name="viewWidth" format="dimension"/>
+        <attr name="viewHeight" format="dimension"/>
+        <attr name="viewRoundWidth" format="dimension"/>
+        <attr name="centerColor" format="color"/>
+
+    </declare-styleable>
+</resources>

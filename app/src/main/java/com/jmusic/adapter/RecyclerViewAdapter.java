@@ -1,6 +1,5 @@
 package com.jmusic.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,20 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.johnpersano.supertoasts.library.Style;
-import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.jmusic.R;
-import com.jmusic.activity.PlayMusicActivity;
-import com.jmusic.bean.C;
+import com.lib_common.bean.C;
 import com.jmusic.bean.MusicInfo;
 import com.lib_common.bean.Constance;
-import com.lib_common.bean.ErrCode;
 import com.lib_common.bean.MessageEvent;
 import com.lib_common.util.EventBusUtil;
 import com.lib_common.util.ScreenUtil;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.BaseViewHolder>{
 
@@ -132,6 +126,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                    params.height= 453;
                }
 //               params.height=(position % 2)*100 + 600;
+//                params.height =  (int) (200 + Math.random() * 400) ;
                ivImage.setLayoutParams(params);
 
 
@@ -140,8 +135,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     public void onClick(View v) {
                         EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.PLAYINFO,dataList.get(position)));
                         ARouter.getInstance().build(Constance.ACTIVITY_URL_PLAYMUSIC)
-                                .withTransition(R.anim.slide_in_right,R.anim.slide_out_right)
-                                .navigation();
+                                .withTransition(R.anim.slide_in_bottom,0)
+                                .navigation(context);
                     }
                 });
 

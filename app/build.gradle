@@ -2,6 +2,14 @@ plugins {
     id 'com.android.application'
 }
 
+//用于生成时间
+def buildTime() {
+    def date = new Date()
+    //yy年 MM月 dd日 HH小时 mm分钟 ss秒
+    def formattedDate = date.format('yyyyMMdd_HHmm')
+    return formattedDate
+}
+
 android {
 //    compileSdkVersion 30
 //    buildToolsVersion "30.0.3"
@@ -44,6 +52,20 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                if (buildType.name.toLowerCase().contains("release")) {
+                    def fileName = "../../apk/JMusic${defaultConfig.versionName}_DATE-${buildTime()}.apk"
+                    outputFileName = fileName
+                } else {
+                    def fileName = "../../../apk/debug/JMusic-${defaultConfig.versionName}-debug.apk"
+                    outputFileName = fileName
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -60,8 +82,9 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.0'
     if (!rootProject.ext.isApp){
         implementation project(":lib_splashscreen")
-//        implementation project(":lib_home")
-//        implementation project(":lib_base")
+        implementation project(":lib_searchview")
+        implementation project(":lib_splashscreen")
+        implementation project(":lib_update")
     }
     //下拉刷新
 //    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'

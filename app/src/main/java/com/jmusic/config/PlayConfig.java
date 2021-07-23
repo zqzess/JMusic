@@ -19,7 +19,7 @@ public class PlayConfig {
     public static boolean isSingleList = false;   //列表循环
     public static boolean isRandomList = false;   //列表随机
     public static MusicInfo playNow;    //当前正在播放的音乐
-    public static int playFlag=0;   /**0为无播放内容，1为有播放内容,3为主页控制暂停**/
+    public static int playFlag=0;   /**0为无播放内容，1为有播放内容,3为启动app进入主页没有播放或主页控制暂停**/
 
     public static String timeAllCount()
     {

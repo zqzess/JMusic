@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/searc_resoult_tv_name"
+                android:id="@+id/searc_result_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="星辰大海"
@@ -24,16 +24,16 @@
                 android:textColor="@color/hotpink"
                 android:textStyle="bold"/>
             <TextView
-                android:id="@+id/searc_resoult_tv_author"
+                android:id="@+id/searc_result_tv_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="作者"
                 android:textSize="14sp"/>
         </LinearLayout>
         <TextView
-            android:id="@+id/searc_resoult_tv_btn_more"
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/searc_result_tv_btn_more"
+            android:layout_width="40dp"
+            android:layout_height="fill_parent"
             android:background="@drawable/ic_more"/>
     </LinearLayout>
 

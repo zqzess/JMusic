@@ -9,21 +9,32 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alex.voice.SPlayer;
+import com.alex.voice.listener.PlayerListener;
+import com.alex.voice.player.SMediaPlayer;
 import com.alibaba.android.arouter.facade.annotation.Route;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.guogali.progressbuttonlibrary.ProgressButton;
 import com.jmusic.R;
+import com.jmusic.bean.MusicInfo;
 import com.jmusic.config.PlayConfig;
 import com.jmusic.util.FragmentUtils;
+import com.lib_common.bean.C;
 import com.lib_common.bean.Constance;
+import com.lib_common.bean.ErrCode;
+import com.lib_common.bean.MessageEvent;
+import com.lib_common.cache.ACache;
 import com.lib_common.config.SysGlobalConfig;
+import com.lib_common.customView.ProgressButton;
+import com.lib_common.util.EventBusUtil;
+import com.lib_common.util.SharedPreferencesUtil;
 import com.lib_common.util.TabItem;
 
 import java.util.ArrayList;
@@ -51,6 +62,9 @@ public class FragmentInitActivity extends AppCompatActivity {
     @BindView(R.id.main_click)
     TextView btn_click;
 
+    @BindView(R.id.main_small_control)
+    LinearLayout linearLayout;
+
     Handler mHandler = new Handler();
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -77,7 +91,7 @@ public class FragmentInitActivity extends AppCompatActivity {
                 R.drawable.ic_action_play,
                 R.drawable.ic_action_play_select,
                 "乐库",
-                FragmentUtils.getPlayFragment().getClass(), R.color.courseTable3
+                FragmentUtils.getMusicResourceFragment().getClass(), R.color.courseTable3
         ));
 
         mFragmentList.add(new TabItem(
@@ -133,43 +147,85 @@ public class FragmentInitActivity extends AppCompatActivity {
 
     void initView()
     {
-        if(PlayConfig.playFlag!=0)
+        long id;
+        String name;
+        String artist;
+        String albumpic;
+        id=SharedPreferencesUtil.getLong(this,"id",0,"playinginfo");
+        if(id!=0)
         {
-            String author="";
-            try {
-                author=PlayConfig.playNow.getArtist();
-            }catch (Exception e)
+            name=(String) SharedPreferencesUtil.get(this,"name","","playinginfo");
+            artist=(String) SharedPreferencesUtil.get(this,"author","","playinginfo");
+            albumpic=(String) SharedPreferencesUtil.get(this,"pic","","playinginfo");
+            PlayConfig.playNow=new MusicInfo(id,name,0,null,albumpic,null,artist,0,null,0,null,0);
+            PlayConfig.playFlag=3;
+            PlayConfig.playingId=id;
+            linearLayout.setVisibility(View.VISIBLE);
+
+
+            if(PlayConfig.playFlag!=0)
             {
-                e.printStackTrace();
+                String author="";
+                try {
+                    author=PlayConfig.playNow.getArtist();
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+
+                if(author.length()>20)
+                {
+                    author="群星";
+                }
+                try {
+                    btn_click.setText(PlayConfig.playNow.getName()+" - "+author);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                    btn_click.setText("");
+                }
+
+                try {
+                    Glide.with(iv_pic.getContext()).load(PlayConfig.playNow.getAlbumPic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.mipmap.ic_launcher).crossFade().into(iv_pic);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                if(SPlayer.instance().isPlaying())
+                {
+                    button.setPauseOrPlay(2);/**** 标识播放状态： 1是暂停  ; 2是播放*/
+                }else
+                {
+                    button.setPauseOrPlay(1);
+                }
+
+                if(PlayConfig.playFlag==1)
+                {
+                    try {
+                        if(PlayConfig.mediaPlayer.getDuration()==0)
+                        {
+                            button.setProgressMax(100);
+                        }
+                        button.setProgressValue(PlayConfig.mediaPlayer.getCurrentPosition());
+                    }catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    mHandler.post(mRunnable);
+                }
+
             }
 
 
-            if(author.length()>20)
-            {
-                author="群星";
-            }
-            btn_click.setText(PlayConfig.playNow.getName()+" - "+author);
-            Glide.with(iv_pic.getContext()).load(PlayConfig.playNow.getAlbumPic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.mipmap.ic_launcher).crossFade().into(iv_pic);
-            if(SPlayer.instance().isPlaying())
-            {
-                button.setPauseOrPlay(2);/**** 标识播放状态： 1是暂停  ; 2是播放*/
-            }else
-            {
-                button.setPauseOrPlay(1);
-            }
 
-            if(PlayConfig.mediaPlayer.getDuration()==0)
-            {
-                button.setProgressMax(100);
-            }
-            try {
-                button.setProgressValue(PlayConfig.mediaPlayer.getCurrentPosition());
-            }catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            mHandler.post(mRunnable);
+
+        }else
+        {
+            linearLayout.setVisibility(View.GONE);
         }
+
+
 
         btn_click.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,7 +234,8 @@ public class FragmentInitActivity extends AppCompatActivity {
                 {
                     PlayConfig.playFlag=3;
                 }
-                ARouter.getInstance().build(Constance.ACTIVITY_URL_PLAYMUSIC).withTransition(R.anim.slide_in_right,R.anim.slide_out_right).navigation();
+                EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.PLAYINFO,PlayConfig.playNow));
+                ARouter.getInstance().build(Constance.ACTIVITY_URL_PLAYMUSIC).withTransition(R.anim.slide_in_bottom,0).navigation(FragmentInitActivity.this);
             }
         });
 
@@ -194,6 +251,50 @@ public class FragmentInitActivity extends AppCompatActivity {
                     button.setPauseOrPlay(1);
                 }else
                 {
+                    if(PlayConfig.mediaPlayer==null)
+                    {
+                        ACache mCache=ACache.get(FragmentInitActivity.this);
+                        SPlayer.instance().useWakeMode(false)//是否使用环形锁,默认不使用
+                                .useWifiLock(false)//是否使用wifi锁,默认不使用
+                                .setUseCache(true)//是否使用缓存,默认开启
+                                .playByUrl(mCache.getAsString("audiourl&"+id), new PlayerListener() {
+                                    @Override
+                                    public void LoadSuccess(SMediaPlayer mediaPlayer) {
+                                        PlayConfig.mediaPlayer=SPlayer.instance().getMediaPlayer();
+                                        mediaPlayer.start();
+                                        PlayConfig.currentPosition=0;
+                                        PlayConfig.isPlaying=true;
+                                        PlayConfig.playFlag=1;
+                                        PlayConfig.playingId =id;
+                                        mHandler.post(mRunnable);
+                                    }
+
+                                    @Override
+                                    public void Loading(SMediaPlayer mediaPlayer, int i) {
+
+                                    }
+
+                                    @Override
+                                    public void onCompletion(SMediaPlayer mediaPlayer) {
+                                        if(PlayConfig.isSingle)
+                                        {
+                                            mediaPlayer.start();
+                                            mediaPlayer.seekTo(0);
+                                        }else if(PlayConfig.isSingleList)
+                                        {
+
+                                        }else if(PlayConfig.isRandomList)
+                                        {
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                    }
+
+                                });
+                    }
                     PlayConfig.isPlaying=true;
                     SPlayer.instance().start(); //继续
                     button.setPauseOrPlay(2);
@@ -211,10 +312,6 @@ public class FragmentInitActivity extends AppCompatActivity {
             if(PlayConfig.playFlag!=0)
             {
                 String author=PlayConfig.playNow.getArtist();
-                if(author.length()>20)
-                {
-                    author="群星";
-                }
                 btn_click.setText(PlayConfig.playNow.getName()+" - "+author);
                 Glide.with(iv_pic.getContext()).load(PlayConfig.playNow.getAlbumPic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.mipmap.ic_launcher).crossFade().into(iv_pic);
             }

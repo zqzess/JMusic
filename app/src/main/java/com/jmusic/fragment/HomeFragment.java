@@ -26,10 +26,10 @@ import com.jmusic.adapter.RecyclerViewAdapter;
 import com.jmusic.bean.MusicInfo;
 
 
-import com.jmusic.util.HeadersUtil;
+import com.lib_common.util.HeadersUtil;
 import com.jmusic.net.HttpRequest;
 import com.lib_common.bean.Constance;
-import com.jmusic.bean.NetString;
+import com.lib_common.bean.NetString;
 import com.lib_common.net.HttpRequestManage;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.layout.SmartRefreshLayout;
@@ -117,7 +117,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
                 // 执行你的耗时操作代码
-                HttpRequestManage.gzipRequest(NetString.musicRecommend, HeadersUtil.MUSICGZIP, new Response.Listener<String>() {
+                HttpRequestManage.gzipRequest(NetString.musicRecommend, HeadersUtil.MUSICINFOGZIP, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         JSONObject jsonObject= null;
@@ -171,4 +171,16 @@ public class HomeFragment extends Fragment {
     public void onPause() {
         super.onPause();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
 }

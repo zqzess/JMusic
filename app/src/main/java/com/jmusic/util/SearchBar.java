@@ -22,7 +22,6 @@ import com.jmusic.R;
 public class SearchBar extends LinearLayout {
     private TextView tv_icon;
     private TextView tv_hint;
-    private MyItemClicked myItemClicked;
     private LinearLayout linearLayout;
     public SearchBar(Context context) {
         super(context);
@@ -33,22 +32,5 @@ public class SearchBar extends LinearLayout {
         linearLayout = (LinearLayout) findViewById(R.id.searc_linearlayout);
         tv_icon=(TextView)findViewById(R.id.searchbar_tv_icon);
         tv_hint=(TextView)findViewById(R.id.search_bar_tv_hint);
-        linearLayout.setOnClickListener(new MyClick());
     }
-    private class MyClick implements OnClickListener
-    {
-
-        @Override
-        public void onClick(View v) {
-            myItemClicked.myItemClicked();
-        }
-    }
-    public interface MyItemClicked {
-        public void myItemClicked();
-    }
-
-    public void setMyItemClickedListener(MyItemClicked myItemClicked) {
-        this.myItemClicked = myItemClicked;
-    }
-
 }

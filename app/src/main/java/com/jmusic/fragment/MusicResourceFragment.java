@@ -11,15 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.jmusic.R;
+import com.jmusic.util.FragmentUtils;
 import com.jmusic.util.SearchBar;
 import com.lib_common.bean.Constance;
-import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-
-import java.util.concurrent.Executors;
 
 @Route(path = Constance.FRAGMENT_URL_PLAY)
-public class PlayFragment extends Fragment {
+public class MusicResourceFragment extends Fragment {
 
     Activity activity;
     SearchBar searchBar;
@@ -29,6 +28,7 @@ public class PlayFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_musicsource, container, false);
         activity=this.getActivity();
         searchBar=(SearchBar)view.findViewById(R.id.music_search_bar);
+        initView();
         return view;
     }
     void initView()
@@ -36,7 +36,7 @@ public class PlayFragment extends Fragment {
         searchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ARouter.getInstance().build(Constance.ACTIVITY_URL_SEARCHMAIN).navigation();
             }
         });
     }

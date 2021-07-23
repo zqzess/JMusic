@@ -4,8 +4,8 @@ import android.app.Application;
 
 import com.alex.voice.SPlayer;
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.jmusic.config.PlayConfig;
 import com.lib_common.net.VolleyRequestQueueManager;
+import com.lib_common.util.HeadersUtil;
 
 public class MyApplication extends Application {
     private boolean isDebugARouter =true;

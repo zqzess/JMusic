@@ -1,4 +1,4 @@
-package com.lib_searchview;
+package com.lib_searchview.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -6,6 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.lib_common.bean.C;
+import com.lib_common.bean.MessageEvent;
+import com.lib_common.util.EventBusUtil;
+import com.lib_searchview.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,25 +58,41 @@ public class SearchAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tv_icon = (TextView) convertView.findViewById(R.id.lv_search_tv_icon);
             holder.tv_context = (TextView) convertView.findViewById(R.id.lv_search_tv_text);
-
+            holder.tv_describe = (TextView)convertView.findViewById(R.id.lv_search_tv_describe);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         if(searchListType==0)
-        {
+        {//热搜,热搜是有标题和描述的，所以它是两个字符串拼接的，搜索提示没有
+            holder.tv_describe.setVisibility(View.VISIBLE);
             holder.tv_icon.setText(position+1+"");
+//            holder.tv_icon.setTextSize(16);
             holder.tv_icon.setBackground(null);
+            String string=searchList.get(position);
+            String[] arr=string.split(",");
+            holder.tv_context.setText(arr[0]);
+            holder.tv_describe.setText(arr[1]);
         }else if(searchListType==1)
-        {
+        {//搜索提示
+            holder.tv_describe.setVisibility(View.GONE);
             holder.tv_icon.setBackground(activity.getDrawable(R.drawable.ic_action_search));
+            holder.tv_context.setText(searchList.get(position));
         }
-        holder.tv_context.setText(searchList.get(position));
 
-        holder.tv_context.setOnClickListener(new View.OnClickListener() {
+
+        convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(searchListType==0)
+                {//热搜
+                    String string=searchList.get(position);
+                    String[] arr=string.split(",");
+                    EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.SEARCHHOTANDTIP,arr[0]));
+                }else
+                {//搜索提示
+                    EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.SEARCHHOTANDTIP,searchList.get(position)));
+                }
             }
         });
         return convertView;
@@ -79,5 +100,6 @@ public class SearchAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView tv_icon;
         TextView tv_context;
+        TextView tv_describe;
     }
 }

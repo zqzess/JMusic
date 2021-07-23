@@ -2,10 +2,12 @@ package com.lib_common.base;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.transition.Explode;
 
 import androidx.annotation.Nullable;
 
 import com.lib_common.bean.MessageEvent;
+import com.lib_common.config.SysGlobalConfig;
 import com.lib_common.util.ActivityUtils;
 import com.lib_common.util.EventBusUtil;
 
@@ -23,6 +25,7 @@ public abstract class BaseActivity extends Activity {
             EventBusUtil.register(this);
         }
         initViews();
+        SysGlobalConfig.SystemBarColor(this,true);
         ActivityUtils.addActivity(this);
     }
 
@@ -30,16 +33,6 @@ public abstract class BaseActivity extends Activity {
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isRegisterEventBus()) {
-            EventBusUtil.unregister(this);
-        }
-        ActivityUtils.removeActivity(this);
     }
 
 
@@ -89,5 +82,33 @@ public abstract class BaseActivity extends Activity {
      */
     protected void receiveStickyEvent(MessageEvent event) {
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isRegisterEventBus()) {
+            EventBusUtil.unregister(this);
+        }
+        ActivityUtils.removeActivity(this);
     }
 }

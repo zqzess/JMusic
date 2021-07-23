@@ -13,7 +13,7 @@ public class FragmentUtils {
         return fragment;
     }
 
-    public static Fragment getPlayFragment() {
+    public static Fragment getMusicResourceFragment() {
         Fragment fragment = (Fragment) ARouter.getInstance().build(Constance.FRAGMENT_URL_PLAY).navigation();
         return fragment;
     }

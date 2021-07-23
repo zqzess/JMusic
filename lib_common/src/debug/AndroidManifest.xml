@@ -3,7 +3,6 @@
     package="com.lib_common">
 
     <application>
-        <activity android:name="com.jmusic.activity.FragmentInitActivity"></activity>
     </application>
 
 </manifest>

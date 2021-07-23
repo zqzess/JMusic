@@ -1,4 +1,4 @@
-package com.searchview;
+package com.lib_searchview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

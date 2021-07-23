@@ -27,7 +27,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // 启动登录窗口
-                ARouter.getInstance().build(Constance.ACTIVITY_URL_MAINFRAGMENT).withTransition(R.anim.fade_in, R.anim.fade_out).navigation();
+                ARouter.getInstance().build(Constance.ACTIVITY_URL_MAINFRAGMENT).withTransition(R.anim.slide_in_from_top, R.anim.slide_out_from_top).navigation(SplashScreenActivity.this);
                 // 关闭启动画面
                 finish();//启动后销毁自身
             }

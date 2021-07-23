@@ -7,7 +7,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.jmusic.bean.MusicInfo;
-import com.jmusic.util.HeadersUtil;
+import com.lib_common.util.HeadersUtil;
 import com.lib_common.cache.ACache;
 import com.lib_common.net.HttpRequestManage;
 import com.lib_common.util.Base64Utils;
@@ -112,6 +112,10 @@ public class HttpRequest {
                     if(artist.isEmpty())
                     {
                         artist="";
+                    }
+                    if(artist.length()>20)
+                    {
+                        artist="群星";
                     }
                     if(artistPic.isEmpty())
                     {
@@ -229,7 +233,7 @@ public class HttpRequest {
     //TODO请求获取歌词gzip
     public static void netGetLyrcGzip(Context context,String url,long musicId,String errMsg)
     {
-        HttpRequestManage.gzipRequest(url, HeadersUtil.MUSICGZIP, new Response.Listener<String>() {
+        HttpRequestManage.gzipRequest(url, HeadersUtil.MUSICINFOGZIP, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {

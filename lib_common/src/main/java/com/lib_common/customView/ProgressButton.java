@@ -1,4 +1,4 @@
-package com.jmusic.util;
+package com.lib_common.customView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,14 +13,15 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.jmusic.R;
+import com.lib_common.R;
+
 
 /**
  * author : zqzess
  * github : https://github.com/zqzess
  * date   : 2021/7/20 9:56
- * desc   :
- * version: 1.0
+ * desc   : 改自 https://github.com/galibujianbusana/progressBtn1 项目
+ * version: 2.0
  * project: JMusic
  */
 public class ProgressButton extends View {
@@ -80,9 +81,7 @@ public class ProgressButton extends View {
         /*** 画外层的圆环*/
         canvas.save();
         int centre = getWidth() / 2;
-        Log.d(TAG, "onDraw: ----输出；center--"+centre);
         int radius = (int) (centre - viewRoundWidth/2);
-        Log.d(TAG, "onDraw: ----输出；radius--"+radius);
         paint.setColor(bgColor); //设置圆环的颜色
         paint.setStyle(Paint.Style.STROKE); //设置空心
         paint.setStrokeWidth(viewRoundWidth); //设置圆环的宽度
@@ -94,7 +93,13 @@ public class ProgressButton extends View {
         paint.setStrokeWidth(viewRoundWidth);
         RectF oval = new RectF(centre - radius, centre - radius, centre
                 + radius, centre + radius);
-        canvas.drawArc(oval, -90, 360 * progressValue / progressMax, false, paint);
+        try {
+            canvas.drawArc(oval, -90, 360 * progressValue / progressMax, false, paint);
+        }catch (Exception e)
+        {
+            canvas.drawArc(oval, -90, 360 * progressValue / 0, false, paint);
+        }
+
 
         /*****绘制中心的暂停，播放标识*/
         int x=centre*2;

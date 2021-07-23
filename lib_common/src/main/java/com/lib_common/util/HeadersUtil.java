@@ -1,4 +1,4 @@
-package com.jmusic.util;
+package com.lib_common.util;
 
 
 import java.util.HashMap;

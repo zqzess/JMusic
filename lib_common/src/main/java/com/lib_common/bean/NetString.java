@@ -1,4 +1,4 @@
-package com.jmusic.bean;
+package com.lib_common.bean;
 
 import java.net.URLEncoder;
 
@@ -48,9 +48,27 @@ public class NetString {
 //    public static String audioUrl=hostName+"/api/service/music/audioUrl";
     public static String audioUrl;
 
-    //搜索
+    //综合搜索
     // http://bd-api.kuwo.cn/api/search/comprehensive/list?pn=0&rn=20&keyword=%E6%98%9F%E8%BE%B0%E5%A4%A7%E6%B5%B7&uid=908709&token=1770ba42656eed97ee07bbf8a2656d9b HTTP/1.1
     public static String searchUrl;
+    //音乐搜索
+    // http://bd-api.kuwo.cn/api/search/music/list?pn=0&rn=20&keyword=...&uid=-1&token= HTTP/1.1
+    public static String searchMusicUrl;
+    //搜索提示
+    // http://bd-api.kuwo.cn/api/search/tip/list?keyword=...&uid=-1token= HTTP/1.1
+    public static String searchTipUrl;
+
+
+    //热搜
+    // http://bd-api.kuwo.cn/api/search/hot/list?uid=-1&token= HTTP/1.1
+    public static String searchHot=hostName+"/api/search/hot/list?uid=-1&token= HTTP/1.1";
+
+    //排行榜
+    //http://bd-api.kuwo.cn/api/service/finds/index?uid=-1&categoryId=1&token= HTTP/1.1
+
+    //获取github release 最新版本
+    //https://api.github.com/repos/zqzess/JMusic/releases/latest
+    public static String lastestVerUrl="https://api.github.com/repos/zqzess/JMusic/releases/latest";
 
     public static String getMusicLyric() {
         return musicLyric;

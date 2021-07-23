@@ -78,7 +78,7 @@ dependencies {
     api "org.permissionsdispatcher:permissionsdispatcher:4.7.0"
     annotationProcessor "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"
     //圆形进度音乐播放按钮
-    compile 'com.github.galibujianbusana:ProgressBtn1:master-SNAPSHOT'
+//    compile 'com.github.galibujianbusana:ProgressBtn1:master-SNAPSHOT'
     //网络请求框架
     implementation 'com.android.volley:volley:1.2.0'
     //替换findviewbyid
@@ -118,6 +118,13 @@ dependencies {
     //进度条
 //    implementation 'cn.bingoogolapple:bga-progressbar:1.0.0@aar'
     implementation 'com.github.zhouzhuo810:ZzHorizontalProgressBar:1.1.1'
+
+    //SuperTextView
+    compile 'com.github.chenBingX:SuperTextView:3.2.5.99'
+
+    //提示框
+    compile 'com.github.1em0nsOft:LemonHello4Android:1.0.2'
+    compile 'com.github.1em0nsOft:LemonBubble4Android:1.0.13'
 
 
 

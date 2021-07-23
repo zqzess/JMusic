@@ -16,9 +16,10 @@ import com.alex.voice.listener.OnDownloadListener;
 import com.alex.voice.listener.PlayerListener;
 import com.alex.voice.netWork.VoiceDownloadUtil;
 import com.alex.voice.player.SMediaPlayer;
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.jmusic.R;
-import com.jmusic.bean.C;
+import com.lib_common.bean.C;
 import com.jmusic.bean.MusicInfo;
 import com.jmusic.config.PlayConfig;
 import com.jmusic.net.HttpRequest;
@@ -29,15 +30,16 @@ import com.lib_common.base.BaseActivity;
 import com.lib_common.bean.Constance;
 import com.lib_common.bean.ErrCode;
 import com.lib_common.bean.MessageEvent;
-import com.jmusic.bean.NetString;
+import com.lib_common.bean.NetString;
 import com.lib_common.cache.ACache;
 import com.lib_common.config.SysGlobalConfig;
+import com.lib_common.util.SharedPreferencesUtil;
+import com.lib_searchview.bean.MusicPageInfo;
 
 import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import me.zhouzhuo.zzhorizontalprogressbar.ZzHorizontalProgressBar;
 
 @Route(path = Constance.ACTIVITY_URL_PLAYMUSIC)
@@ -95,10 +97,13 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
             PlayConfig.currentPosition=0;
         }
         PlayConfig.playFlag=1;
+
+
     }
 
     @Override
     protected void setContentView() {
+        overridePendingTransition(R.anim.in_from_bottom, 0);
         setContentView(R.layout.activity_play_music);
     }
 
@@ -111,17 +116,13 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
 
 //        executorService = Executors.newCachedThreadPool();
 
-        if(music.getArtist().length()>20)
-        {
-            music.setArtist("群星");
-        }
         try {
             tv_name.setText(music.getName());
+            tv_author.setText(music.getArtist());
         }catch (Exception e)
         {
             e.printStackTrace();
         }
-        tv_author.setText(music.getArtist());
 
         mLyricView.setEmptyContent("加载中");
 
@@ -158,6 +159,7 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
                 public void run() {
                     try{
                         musicload(mCache.getAsString("audiourl&"+id));
+                        Log.d("歌曲链接",mCache.getAsString("audiourl&"+id));
                     }catch (Exception e)
                     {
                         e.printStackTrace();
@@ -168,6 +170,7 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
         {
             try{
                 musicload(mCache.getAsString("audiourl&"+id));
+                Log.d("歌曲链接",mCache.getAsString("audiourl&"+id));
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -230,6 +233,10 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
                                 seekBar.getThumb().setColorFilter(Color.parseColor("#ff00ddFF"), PorterDuff.Mode.SRC_ATOP);
                                 musicPlay(audioUrl);
                                 PlayConfig.playNow=music;
+                                SharedPreferencesUtil.putLong(context,"id",id,"playinginfo");
+                                SharedPreferencesUtil.put(context,"name",music.getName(),"playinginfo");
+                                SharedPreferencesUtil.put(context,"author",music.getArtist(),"playinginfo");
+                                SharedPreferencesUtil.put(context,"pic",music.getAlbumPic(),"playinginfo");
                             }
                         });
                     }
@@ -376,12 +383,20 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
         return true;
     }
 
+    //TODO 接受粘性事件
     @Override
     protected void receiveStickyEvent(MessageEvent event) {
         switch (event.getCode()) {
             case C.EventCode.PLAYINFO:
                 music= (MusicInfo) event.getData();
                 id=music.getId();
+                PlayConfig.playNow=music;
+                break;
+            case C.EventCode.SEARCHRSULTTOPALY:
+                MusicPageInfo info=(MusicPageInfo)event.getData();
+                id=info.getId();
+                music=new MusicInfo(info.getId(),info.getName(),info.getAlbumId(),info.getAlbum(),info.getAlbumPic(),info.getAlbumPic120(),info.getArtist(),info.getArtistId(),info.getArtistPic(),0,null,info.getIsMv());
+                PlayConfig.playNow=music;
                 break;
         }
     }
@@ -428,4 +443,24 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
         mHandler.removeCallbacksAndMessages(mRunnable);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_bottom);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 }

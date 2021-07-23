@@ -51,6 +51,14 @@ public class SharedPreferencesUtil {
         editor.apply();
         // editor.commit(); 同步效率低
     }
+    public static void putLong(Context context, String key, long value,
+                               String fileName)
+    {
+        SharedPreferences sp = context.getSharedPreferences(fileName, context.MODE_PRIVATE);
+        Editor editor = sp.edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
 
     /**
      * 得到某个key对应的值
@@ -90,6 +98,12 @@ public class SharedPreferencesUtil {
             return sp.getLong(key, (Long) defValue);
         }
         return null;
+    }
+
+    public static long getLong(Context context, String key, long defValue,
+                               String fileName) {
+        SharedPreferences sp = context.getSharedPreferences(fileName, context.MODE_PRIVATE);
+        return sp.getLong(key, defValue);
     }
 
     /**
