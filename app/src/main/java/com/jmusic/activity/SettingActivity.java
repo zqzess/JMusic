@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.app.DownloadManager;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,14 +13,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alex.voice.SPlayer;
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.hb.dialog.myDialog.MyAlertDialog;
 import com.jmusic.MainActivity;
 import com.jmusic.R;
 import com.jmusic.bean.MusicInfo;
 import com.jmusic.config.PlayConfig;
+import com.kaopiz.kprogresshud.KProgressHUD;
 import com.lib_common.base.BaseActivity;
 import com.lib_common.bean.C;
 import com.lib_common.bean.Constance;
@@ -47,8 +53,12 @@ public class SettingActivity extends BaseActivity {
     RightAndLeftTextView btn_show_cache;
     @BindView(R.id.setting_update)
     RightAndLeftTextView btn_show_update;
+    @BindView(R.id.setting_topbar_back)
+    TextView btn_back;
+
     Context context;
     String versionName;
+    KProgressHUD hud;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,32 +87,36 @@ public class SettingActivity extends BaseActivity {
         btn_show_cache.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LemonHello.getWarningHello("您确认要清理缓存吗？", "清理缓存后歌曲需要重新缓存，此操作无法撤销！")
-                        .addAction(new LemonHelloAction("取消", new LemonHelloActionDelegate() {
+                MyAlertDialog myAlertDialog = new MyAlertDialog(context).builder()
+                        .setTitle("您确认要清理缓存吗？")
+                        .setMsg("清理缓存后歌曲需要重新缓存")
+                        .setPositiveButton("确认", new View.OnClickListener() {
                             @Override
-                            public void onClick(LemonHelloView helloView, LemonHelloInfo helloInfo, LemonHelloAction helloAction) {
-                                helloView.hide();
-                            }
-                        }))
-                        .addAction(new LemonHelloAction("确定删除", Color.RED, new LemonHelloActionDelegate() {
-                            @Override
-                            public void onClick(LemonHelloView helloView, LemonHelloInfo helloInfo, LemonHelloAction helloAction) {
-                                helloView.hide();
-
-                                // 提示框使用了LemonBubble，请您参考：https://github.com/1em0nsOft/LemonBubble4Android
-                                LemonBubble.showRoundProgress(context, "正在清理中...");
+                            public void onClick(View v) {
                                 SPlayer.instance().clearCache();
+                                hud=KProgressHUD.create(context)
+                                        .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                                        .setCancellable(true)
+                                        .setAnimationSpeed(2)
+                                        .setDimAmount(0.5f)
+                                        .show();
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        LemonBubble.showRight(context, "清理成功", 1000);
                                         String cacheSize = SPlayer.instance().getCacheSize();
                                         btn_show_cache.setmRightText(cacheSize);
+                                        hud.dismiss();
+                                        Toast.makeText(context,"清理成功",Toast.LENGTH_SHORT);
                                     }
-                                }, 2000);
+                                },1000);
                             }
-                        }))
-                        .show(context);
+                        }).setNegativeButton("取消", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                            }
+                        });
+                myAlertDialog.show();
+
             }
         });
 
@@ -110,6 +124,22 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 UpdateUtil.getNewVersion(context,versionName);
+            }
+        });
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    public void run() {
+                        try {
+                            Instrumentation inst = new Instrumentation();
+                            inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }.start();
             }
         });
     }

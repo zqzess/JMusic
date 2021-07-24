@@ -1,5 +1,6 @@
 package com.lib_searchview;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.coorchice.library.SuperTextView;
+import com.kaopiz.kprogresshud.KProgressHUD;
 import com.lib_common.base.BaseActivity;
 import com.lib_common.bean.C;
 import com.lib_common.bean.Constance;
@@ -75,6 +77,13 @@ public class SearchMainActivity extends BaseActivity {
 
     @BindView(R2.id.search_label)
     LabelLayoutView labelLayoutView;
+
+    @BindView(R2.id.search_topbar_back)
+    TextView btn_back;
+
+    @BindView(R2.id.search_main_topbar_search)
+    TextView btn_search;
+
     List<String> searchHotList=new ArrayList<>();   //热搜
     List<String> searchTipList=new ArrayList<>();   //搜索推荐
     List<MusicPageInfo> searchList=new ArrayList<>();//搜索结果
@@ -84,6 +93,7 @@ public class SearchMainActivity extends BaseActivity {
     ACache mCache;
     Context context;
     LinearLayout all_layout;
+    KProgressHUD hud;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,8 +101,6 @@ public class SearchMainActivity extends BaseActivity {
         searchResoult.setVisibility(View.GONE);
         linearLayoutlabel.setVisibility(View.VISIBLE);
         linearLayouthot.setVisibility(View.VISIBLE);
-        mCache=ACache.get(this);
-        context=this;
         initLabel();
     }
 
@@ -105,6 +113,8 @@ public class SearchMainActivity extends BaseActivity {
     @Override
     protected void initViews() {
         editText.setText("");
+        context=this;
+        mCache=ACache.get(this);
         initData();
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -191,6 +201,33 @@ public class SearchMainActivity extends BaseActivity {
                 }else
                 {
 
+                }
+            }
+        });
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ("".equals(editText.getText().toString())){
+                    Toast.makeText(getApplicationContext(), "请输入搜索内容", Toast.LENGTH_SHORT).show();
+                }else {
+                    ((InputMethodManager)editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+//                        searchList.clear();
+                    searchResoult.setVisibility(View.VISIBLE);
+                    linearLayoutlabel.setVisibility(View.GONE);
+                    linearLayouthot.setVisibility(View.GONE);
+                    save(editText.getText().toString());
+                    searchList.clear();
+                    searchEvent();
+//                        searchTip.setVisibility(View.VISIBLE);
+//                        searchAdapter= new SearchAdapter(searchList,SearchMainActivity.this,1);
+//                        searchTip.setAdapter(searchAdapter);
                 }
             }
         });
@@ -283,31 +320,54 @@ public class SearchMainActivity extends BaseActivity {
 
     private void initData()
     {
-        HttpRequestManage.gzipRequest(NetString.searchHot, HeadersUtil.MUSICINFOGZIP, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject=new JSONObject(response);
-                    JSONObject data=jsonObject.getJSONObject("data");
-                    JSONArray resultList=data.getJSONArray("resultList");
-                    for (int i = 0; i < resultList.length(); i++) {
-                        JSONObject object = resultList.getJSONObject(i);
-                        String key=object.getString("key");
-                        String describe=object.getString("describe");
-                        searchHotList.add(key+","+describe);
+        if(mCache.getAsString("searchhot")!=null)
+        {
+            try {
+                jsonParse(mCache.getAsString("searchhot"));
+                searchAdapter=new SearchAdapter(searchHotList,SearchMainActivity.this,0);
+                searchHot.setAdapter(searchAdapter);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else
+        {
+            hud=KProgressHUD.create(context)
+                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                    .setCancellable(true)
+                    .setAnimationSpeed(2)
+                    .setDimAmount(0.5f)
+                    .show();
+            HttpRequestManage.gzipRequest(NetString.searchHot, HeadersUtil.MUSICINFOGZIP, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        mCache.put("searchhot", response, 2 * ACache.TIME_DAY);
+                        jsonParse(response);
+                        searchAdapter=new SearchAdapter(searchHotList,SearchMainActivity.this,0);
+                        searchHot.setAdapter(searchAdapter);
+                        hud.dismiss();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    searchAdapter=new SearchAdapter(searchHotList,SearchMainActivity.this,0);
-                    searchHot.setAdapter(searchAdapter);
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, ErrCode.NETERRCODE,Toast.LENGTH_SHORT);
-            }
-        });
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, ErrCode.NETERRCODE,Toast.LENGTH_SHORT);
+                }
+            });
+        }
+    }
+    private void jsonParse(String response) throws JSONException {
+        JSONObject jsonObject=new JSONObject(response);
+        JSONObject data=jsonObject.getJSONObject("data");
+        JSONArray resultList=data.getJSONArray("resultList");
+        for (int i = 0; i < resultList.length(); i++) {
+            JSONObject object = resultList.getJSONObject(i);
+            String key=object.getString("key");
+            String describe=object.getString("describe");
+            searchHotList.add(key+","+describe);
+        }
     }
     //TODO 查找
     private void searchEvent()
@@ -315,6 +375,12 @@ public class SearchMainActivity extends BaseActivity {
         String keyword =editText.getText().toString();
         if(!keyword.isEmpty())
         {
+            hud=KProgressHUD.create(SearchMainActivity.this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setCancellable(true)
+                .setAnimationSpeed(2)
+                .setDimAmount(0.5f)
+                .show();
             NetString.setSearchUrl(keyword);
             HttpRequestManage.gzipRequest(NetString.getSearchUrl(), HeadersUtil.MUSICINFOGZIP, new Response.Listener<String>() {
                 @Override
@@ -347,6 +413,7 @@ public class SearchMainActivity extends BaseActivity {
                         }
                         searchResultAdapter=new SearchResultAdapter(searchList,SearchMainActivity.this,all_layout);
                         searchResoult.setAdapter(searchResultAdapter);
+                        hud.dismiss();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

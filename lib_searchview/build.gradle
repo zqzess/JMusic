@@ -67,4 +67,6 @@ dependencies {
 //    compile 'com.github.loonggg:BottomSheetPopupDialog:v1.0'
     //圆角imageview
     compile 'org.raphets:roundimageview:1.2.0'
+    //仿ios加载框
+    implementation 'com.kaopiz:kprogresshud:1.2.0'
 }

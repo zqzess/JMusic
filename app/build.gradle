@@ -57,10 +57,10 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 if (buildType.name.toLowerCase().contains("release")) {
-                    def fileName = "../../apk/JMusic${defaultConfig.versionName}_DATE-${buildTime()}.apk"
+                    def fileName = "../apk/release/JMusic-${defaultConfig.versionName}_DATE-${buildTime()}.apk"
                     outputFileName = fileName
                 } else {
-                    def fileName = "../../../apk/debug/JMusic-${defaultConfig.versionName}-debug.apk"
+                    def fileName = "../../../../apk/debug/JMusic-${defaultConfig.versionName}-debug.apk"
                     outputFileName = fileName
                 }
             }
@@ -98,5 +98,9 @@ dependencies {
     //进度条
 //    implementation 'cn.bingoogolapple:bga-progressbar:1.0.0@aar'
     implementation 'com.github.zhouzhuo810:ZzHorizontalProgressBar:1.1.1'
+    //提示框
+    implementation 'com.github.HanHuoBin:BaseDialog:1.2.0'
+    //仿ios加载框
+    implementation 'com.kaopiz:kprogresshud:1.2.0'
 
 }

@@ -81,22 +81,22 @@ public class FragmentInitActivity extends AppCompatActivity {
     private void initTabItemData() {
         mFragmentList = new ArrayList<>();
         mFragmentList.add(new TabItem(
-                R.drawable.ic_action_explorer,
-                R.drawable.ic_action_explorer_select,
+                R.drawable.ic_music_explorer,
+                R.drawable.ic_music_explorer_select,
                 "探索",
                 FragmentUtils.getHomeFragment().getClass(), R.color.courseTable3
         ));
 
         mFragmentList.add(new TabItem(
-                R.drawable.ic_action_play,
-                R.drawable.ic_action_play_select,
+                R.drawable.ic_nuscic_home2,
+                R.drawable.ic_music_home_select2,
                 "乐库",
                 FragmentUtils.getMusicResourceFragment().getClass(), R.color.courseTable3
         ));
 
         mFragmentList.add(new TabItem(
-                R.drawable.ic_action_mine,
-                R.drawable.ic_action_mine_select,
+                R.drawable.ic_music_mine2,
+                R.drawable.ic_music_mine_select2,
                 "我的",
                 FragmentUtils.getMeFragment().getClass(), R.color.courseTable3
         ));
