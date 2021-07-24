@@ -8,7 +8,7 @@ import com.lib_common.net.VolleyRequestQueueManager;
 import com.lib_common.util.HeadersUtil;
 
 public class MyApplication extends Application {
-    private boolean isDebugARouter =true;
+    private boolean isDebugARouter =false;
     public static String TAG;
     @Override
     public void onCreate() {
