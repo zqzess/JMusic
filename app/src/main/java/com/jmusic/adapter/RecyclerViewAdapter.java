@@ -15,12 +15,17 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.jmusic.R;
+import com.jmusic.config.PlayConfig;
 import com.lib_common.bean.C;
 import com.jmusic.bean.MusicInfo;
 import com.lib_common.bean.Constance;
 import com.lib_common.bean.MessageEvent;
 import com.lib_common.util.EventBusUtil;
 import com.lib_common.util.ScreenUtil;
+import com.lib_dao.bean.PlayListInfo;
+import com.lib_dao.config.PlayListConfig;
+import com.lib_dao.db.DaoHelper;
+import com.lib_searchview.bean.MusicPageInfo;
 
 import java.util.ArrayList;
 
@@ -134,6 +139,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     @Override
                     public void onClick(View v) {
                         EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.PLAYINFO,dataList.get(position)));
+                        DaoHelper.insert(jclassChange(dataList.get(position), PlayListConfig.historyList,null));
                         ARouter.getInstance().build(Constance.ACTIVITY_URL_PLAYMUSIC)
                                 .withTransition(R.anim.slide_in_bottom,0)
                                 .navigation(context);
@@ -157,6 +163,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Glide.with(itemView.getContext()).load(piclink).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.mipmap.ic_launcher).crossFade().into(ivImage);
             }
         }
+    }
+    public PlayListInfo jclassChange(MusicInfo info, String playListName, String link)
+    {
+        PlayListInfo listInfo=new PlayListInfo(null,info.getId(),info.getName(),info.getArtist(),info.getArtistId(),info.getAlbum(),info.getAlbumPic(),link,info.getAlbumId(),info.getIsMv(),playListName);
+        return listInfo;
     }
 
 }

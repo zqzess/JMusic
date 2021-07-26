@@ -42,7 +42,13 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="30dp"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:gravity="center"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusableInTouchMode="true"/>
           <com.lib_common.customView.ProgressButton
               android:id="@+id/main_btn_play"
                 android:layout_marginLeft="10dp"

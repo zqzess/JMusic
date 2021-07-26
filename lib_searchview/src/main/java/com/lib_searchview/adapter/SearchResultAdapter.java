@@ -17,8 +17,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.lib_common.bean.C;
 import com.lib_common.bean.Constance;
 import com.lib_common.bean.MessageEvent;
+import com.lib_common.cache.ACache;
 import com.lib_common.customView.ShareBottomPopupDialog;
 import com.lib_common.util.EventBusUtil;
+import com.lib_dao.bean.PlayListInfo;
+import com.lib_dao.config.PlayListConfig;
+import com.lib_dao.db.DaoHelper;
 import com.lib_searchview.R;
 import com.lib_searchview.bean.MusicPageInfo;
 
@@ -40,6 +44,9 @@ public class SearchResultAdapter extends BaseAdapter {
     List<MusicPageInfo> searchList=new ArrayList<>();
     Activity activity;
     LinearLayout all_layout;
+    boolean isFavourite=false;
+    PlayListInfo playListInfo;
+    ACache mCache;
 
     public SearchResultAdapter(List<MusicPageInfo> searchList, Activity activity, LinearLayout all_layout) {
         this.searchList = searchList;
@@ -102,6 +109,7 @@ public class SearchResultAdapter extends BaseAdapter {
     }
     private void showDialog(int position)
     {
+        mCache=ACache.get(activity);
         View dialogView = LayoutInflater.from(activity).inflate(R.layout.bottom_dialog_search_main, null);
         final ShareBottomPopupDialog shareBottomPopupDialog = new ShareBottomPopupDialog(activity, dialogView);
         shareBottomPopupDialog.showPopup(all_layout);
@@ -114,10 +122,32 @@ public class SearchResultAdapter extends BaseAdapter {
         Glide.with(iv_icon.getContext()).load(searchList.get(position).getAlbumPic()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.mipmap.ic_launcher).crossFade().into(iv_icon);
         tv_name.setText(searchList.get(position).getName());
         tv_author.setText(searchList.get(position).getArtist());
+        if(DaoHelper.searchwithFavouriteForm(searchList.get(position).getId())!=null)
+        {
+            btn_like.setBackground(activity.getDrawable(R.drawable.ic_like_select));
+            playListInfo=DaoHelper.searchwithFavouriteForm(searchList.get(position).getId());
+            isFavourite=true;
+        }else
+        {
+            btn_like.setBackground(activity.getDrawable(R.drawable.ic_like));
+            isFavourite=false;
+        }
         btn_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btn_like.setBackground(activity.getDrawable(R.drawable.ic_like_select));
+                if(!isFavourite)
+                {
+                    btn_like.setBackground(activity.getDrawable(R.drawable.ic_like_select));
+                    PlayListInfo info=jclassChange(searchList.get(position), PlayListConfig.favouriteList,mCache.getAsString("audiourl&"+searchList.get(position).getId()));
+                    DaoHelper.insert(info);
+                    isFavourite=true;
+                }else
+                {
+                    btn_like.setBackground(activity.getDrawable(R.drawable.ic_like));
+                    DaoHelper.delete(playListInfo.getId());
+                    isFavourite=false;
+                }
+
             }
         });
         btn_add.setOnClickListener(new View.OnClickListener() {
@@ -131,5 +161,10 @@ public class SearchResultAdapter extends BaseAdapter {
                 shareBottomPopupDialog.dismiss();
             }
         });
+    }
+    public PlayListInfo jclassChange(MusicPageInfo info,String playListName,String link)
+    {
+        PlayListInfo listInfo=new PlayListInfo(null,info.getId(),info.getName(),info.getArtist(),info.getArtistId(),info.getAlbum(),info.getAlbumPic(),link,info.getAlbumId(),info.getIsMv(),playListName);
+        return listInfo;
     }
 }

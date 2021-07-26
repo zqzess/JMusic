@@ -60,13 +60,14 @@ android {
                     def fileName = "../apk/release/JMusic-${defaultConfig.versionName}_DATE-${buildTime()}.apk"
                     outputFileName = fileName
                 } else {
-                    def fileName = "../../../../apk/debug/JMusic-${defaultConfig.versionName}-debug.apk"
+                    def fileName = "../../../../build/debug/JMusic-${defaultConfig.versionName}-debug.apk"
                     outputFileName = fileName
                 }
             }
         }
     }
 }
+
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -85,6 +86,7 @@ dependencies {
         implementation project(":lib_searchview")
         implementation project(":lib_splashscreen")
         implementation project(":lib_update")
+        implementation project(":lib_dao")
     }
     //下拉刷新
 //    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
@@ -102,5 +104,7 @@ dependencies {
     implementation 'com.github.HanHuoBin:BaseDialog:1.2.0'
     //仿ios加载框
     implementation 'com.kaopiz:kprogresshud:1.2.0'
+    //弹簧动画listview
+    compile 'com.a520wcf.yllistview:YLListView:1.0.1'
 
 }

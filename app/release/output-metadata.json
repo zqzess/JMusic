@@ -10,9 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 3,
-      "versionName": "0.2.1",
-      "outputFile": "../apk/release/JMusic-0.2.1_DATE-20210724_1032.apk"
+      "versionCode": 4,
+      "versionName": "0.3",
+      "outputFile": "../apk/release/JMusic-0.3_DATE-20210726_1926.apk"
     }
   ]
 }

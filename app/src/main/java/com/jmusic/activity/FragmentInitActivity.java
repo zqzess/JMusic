@@ -195,13 +195,6 @@ public class FragmentInitActivity extends AppCompatActivity {
                 if(SPlayer.instance().isPlaying())
                 {
                     button.setPauseOrPlay(2);/**** 标识播放状态： 1是暂停  ; 2是播放*/
-                }else
-                {
-                    button.setPauseOrPlay(1);
-                }
-
-                if(PlayConfig.playFlag==1)
-                {
                     try {
                         if(PlayConfig.mediaPlayer.getDuration()==0)
                         {
@@ -213,12 +206,27 @@ public class FragmentInitActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     mHandler.post(mRunnable);
+                }else
+                {
+                    button.setPauseOrPlay(1);
                 }
 
+//                if(PlayConfig.playFlag==1&&PlayConfig.isPlaying)
+//                {
+//                    try {
+//                        if(PlayConfig.mediaPlayer.getDuration()==0)
+//                        {
+//                            button.setProgressMax(100);
+//                        }
+//                        button.setProgressValue(PlayConfig.mediaPlayer.getCurrentPosition());
+//                    }catch (Exception e)
+//                    {
+//                        e.printStackTrace();
+//                    }
+//                    mHandler.post(mRunnable);
+//                }
+
             }
-
-
-
 
         }else
         {
@@ -294,9 +302,11 @@ public class FragmentInitActivity extends AppCompatActivity {
                                     }
 
                                 });
+                    }else
+                    {
+                        PlayConfig.isPlaying=true;
+                        SPlayer.instance().start(); //继续
                     }
-                    PlayConfig.isPlaying=true;
-                    SPlayer.instance().start(); //继续
                     button.setPauseOrPlay(2);
                     PlayConfig.currentPosition=0;
 

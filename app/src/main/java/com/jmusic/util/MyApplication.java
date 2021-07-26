@@ -6,6 +6,7 @@ import com.alex.voice.SPlayer;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.lib_common.net.VolleyRequestQueueManager;
 import com.lib_common.util.HeadersUtil;
+import com.lib_dao.db.DaoHelper;
 
 public class MyApplication extends Application {
     private boolean isDebugARouter =false;
@@ -32,6 +33,7 @@ public class MyApplication extends Application {
         //cacheDirPath 默认为 mContext.getExternalCacheDir()
         //cachePath 默认为 "/VoiceCache"
         SPlayer.instance().setCacheDirPath(this.getExternalCacheDir().toString()).setCachePath("/VoiceCache");
+        DaoHelper.getInstance(this);
 
     }
 

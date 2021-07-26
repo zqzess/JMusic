@@ -11,5 +11,6 @@ public class Constance {
     public static final String ACTIVITY_URL_SEARCHMAIN = "/lib_searchview/SearchMainActivity";
     public static final String ACTIVITY_URL_SETTING = "/app/SettingActivity";
     public static final String SERVICE_URL_DOWNLOADSERVICE = "/lib_update/DownloadService";
+    public static final String ACTIVITY_URL_PLAYLIST = "/app/PlayListActivity";
 
 }

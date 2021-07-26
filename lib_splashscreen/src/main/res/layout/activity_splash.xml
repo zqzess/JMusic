@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="唯爱与美食不可辜负"
+            android:text="唯音乐与爱不可辜负"
             android:gravity="center"/>
     </LinearLayout>
 

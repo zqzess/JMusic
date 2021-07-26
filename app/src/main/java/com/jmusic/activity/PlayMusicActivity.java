@@ -1,11 +1,13 @@
 package com.jmusic.activity;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,6 +36,9 @@ import com.lib_common.bean.NetString;
 import com.lib_common.cache.ACache;
 import com.lib_common.config.SysGlobalConfig;
 import com.lib_common.util.SharedPreferencesUtil;
+import com.lib_dao.bean.PlayListInfo;
+import com.lib_dao.config.PlayListConfig;
+import com.lib_dao.db.DaoHelper;
 import com.lib_searchview.bean.MusicPageInfo;
 
 import java.io.File;
@@ -69,12 +74,23 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
     @BindView(R.id.play_seekbar)
     SeekBar seekBar;
 
+    @BindView(R.id.activity_play_tv_btn_down)
+    TextView btn_down;
+
+    @BindView(R.id.activity_play_tv_btn_like)
+    TextView btn_like;
+
+    @BindView(R.id.play_tv_btn_playmode)
+    TextView btn_playmode;
+
 //    LyricView mLyricView;
     Context context;
     long id;
     MusicInfo music;
     ACache mCache;
     Handler mHandler = new Handler();
+    boolean isFavourite=false;
+    PlayListInfo playListInfo;
 //    private ExecutorService executorService;
 
     @Override
@@ -115,6 +131,17 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
         seekBar.setVisibility(View.GONE);
 
 //        executorService = Executors.newCachedThreadPool();
+
+        if(DaoHelper.searchwithFavouriteForm(music.getId())!=null)
+        {
+            btn_like.setBackground(this.getDrawable(com.lib_searchview.R.drawable.ic_like_select));
+            playListInfo=DaoHelper.searchwithFavouriteForm(music.getId());
+            isFavourite=true;
+        }else
+        {
+            btn_like.setBackground(this.getDrawable(com.lib_searchview.R.drawable.ic_like));
+            isFavourite=false;
+        }
 
         try {
             tv_name.setText(music.getName());
@@ -213,6 +240,9 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
             }
         });
         btn_main.setOnClickListener(this);
+        btn_down.setOnClickListener(this);
+        btn_like.setOnClickListener(this);
+        btn_playmode.setOnClickListener(this);
     }
 
     //TODO 歌曲预加载缓存
@@ -406,7 +436,19 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
         switch (v.getId())
         {
             case R.id.play_tv_btn_playmode:
-
+                if (PlayConfig.isSingle)
+                {
+                    //单曲
+                    btn_playmode.setBackground(this.getDrawable(R.drawable.ic_play_single));
+                }else if(PlayConfig.isRandomList)
+                {
+                    //随机
+                    btn_playmode.setBackground(this.getDrawable(R.drawable.ic_play_random));
+                }else if(PlayConfig.isSingleList)
+                {
+                    //列表
+                    btn_playmode.setBackground(this.getDrawable(R.drawable.ic__xunhuan));
+                }
                 break;
             case R.id.play_tv_btn_last:
 
@@ -420,8 +462,59 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
                     btn_main.setBackground(this.getResources().getDrawable(R.drawable.ic_play));
                 }else
                 {
-                    PlayConfig.isPlaying=true;
-                    SPlayer.instance().start(); //继续
+                    if(PlayConfig.mediaPlayer==null)
+                    {
+                        ACache mCache=ACache.get(context);
+                        SPlayer.instance().useWakeMode(false)//是否使用环形锁,默认不使用
+                                .useWifiLock(false)//是否使用wifi锁,默认不使用
+                                .setUseCache(true)//是否使用缓存,默认开启
+                                .playByUrl(mCache.getAsString("audiourl&"+id), new PlayerListener() {
+                                    @Override
+                                    public void LoadSuccess(SMediaPlayer mediaPlayer) {
+                                        PlayConfig.mediaPlayer=SPlayer.instance().getMediaPlayer();
+                                        mediaPlayer.start();
+                                        PlayConfig.mediaPlayer=SPlayer.instance().getMediaPlayer();
+                                        String timeall=PlayConfig.timeAllCount();
+                                        tv_time.setText(timeall);
+                                        String timeend=PlayConfig.timeEndCount();
+                                        PlayConfig.currentPosition=0;
+                                        PlayConfig.isPlaying=true;
+                                        PlayConfig.playFlag=1;
+                                        PlayConfig.playingId =id;
+                                        mHandler.post(mRunnable);
+                                    }
+
+                                    @Override
+                                    public void Loading(SMediaPlayer mediaPlayer, int i) {
+
+                                    }
+
+                                    @Override
+                                    public void onCompletion(SMediaPlayer mediaPlayer) {
+                                        if(PlayConfig.isSingle)
+                                        {
+                                            mediaPlayer.start();
+                                            mediaPlayer.seekTo(0);
+                                        }else if(PlayConfig.isSingleList)
+                                        {
+
+                                        }else if(PlayConfig.isRandomList)
+                                        {
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                    }
+
+                                });
+                    }else
+                    {
+                        PlayConfig.isPlaying=true;
+                        SPlayer.instance().start(); //继续
+                    }
+
                     mLyricView.resume();
                     btn_main.setBackground(this.getResources().getDrawable(R.drawable.ic_pause));
                 }
@@ -431,6 +524,32 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.play_tv_btn_playlist:
 
+                break;
+            case R.id.activity_play_tv_btn_down:
+                new Thread() {
+                    public void run() {
+                        try {
+                            Instrumentation inst = new Instrumentation();
+                            inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }.start();
+                break;
+            case R.id.activity_play_tv_btn_like:
+                if(!isFavourite)
+                {
+                    btn_like.setBackground(this.getDrawable(com.lib_searchview.R.drawable.ic_like_select));
+                    PlayListInfo info=jclassChange(music, PlayListConfig.favouriteList,mCache.getAsString("audiourl&"+music.getId()));
+                    DaoHelper.insert(info);
+                    isFavourite=true;
+                }else
+                {
+                    btn_like.setBackground(this.getDrawable(com.lib_searchview.R.drawable.ic_like));
+                    DaoHelper.delete(playListInfo.getId());
+                    isFavourite=false;
+                }
                 break;
             default:
                 break;
@@ -462,5 +581,11 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    public PlayListInfo jclassChange(MusicInfo info,String playListName,String link)
+    {
+        PlayListInfo listInfo=new PlayListInfo(null,info.getId(),info.getName(),info.getArtist(),info.getArtistId(),info.getAlbum(),info.getAlbumPic(),link,info.getAlbumId(),info.getIsMv(),playListName);
+        return listInfo;
     }
 }

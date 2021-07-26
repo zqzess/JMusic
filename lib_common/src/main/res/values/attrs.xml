@@ -10,4 +10,12 @@
         <attr name="centerColor" format="color"/>
 
     </declare-styleable>
+    <declare-styleable name="VericalIconTextView">
+        <attr name="view_image" format="reference" />
+        <attr name="view_text" format="string" />
+        <attr name="view_text_size" format="dimension" />
+        <attr name="view_text_color" format="color" />
+        <attr name="view_text_size2" format="dimension" />
+        <attr name="view_text_color2" format="color" />
+    </declare-styleable>
 </resources>

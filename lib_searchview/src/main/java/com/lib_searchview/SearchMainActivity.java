@@ -30,6 +30,7 @@ import com.lib_common.net.HttpRequestManage;
 import com.lib_common.util.HeadersUtil;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.lib_dao.db.DaoHelper;
 import com.lib_searchview.adapter.SearchAdapter;
 import com.lib_searchview.adapter.SearchResultAdapter;
 import com.lib_searchview.bean.MusicPageInfo;
