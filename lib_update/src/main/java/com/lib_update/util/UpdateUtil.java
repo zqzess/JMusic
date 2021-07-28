@@ -83,7 +83,7 @@ public class UpdateUtil {
     {
         mDialog = new AlertDialog.Builder(context);
         mDialog.setTitle("土豆音乐又更新咯！");
-        mDialog.setMessage("最新版本:"+verName+"\n"+updateinfo);
+        mDialog.setMessage("最新版本: v"+verName+"\n"+updateinfo);
         mDialog.setPositiveButton("立即更新", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

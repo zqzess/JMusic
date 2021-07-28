@@ -7,8 +7,8 @@ ext {
             buildToolsVersion      : '30.0.3',
             minSdkVersion          : 23,
             targetSdkVersion       : 30,
-            versionCode            : 4,
-            versionName            : '0.3',
+            versionCode            : 5,
+            versionName            : '0.3.1',
 
             //组件applicationid
             lib_login_applicationId: 'com.lib_splashscreen',//登录模块

@@ -211,21 +211,6 @@ public class FragmentInitActivity extends AppCompatActivity {
                     button.setPauseOrPlay(1);
                 }
 
-//                if(PlayConfig.playFlag==1&&PlayConfig.isPlaying)
-//                {
-//                    try {
-//                        if(PlayConfig.mediaPlayer.getDuration()==0)
-//                        {
-//                            button.setProgressMax(100);
-//                        }
-//                        button.setProgressValue(PlayConfig.mediaPlayer.getCurrentPosition());
-//                    }catch (Exception e)
-//                    {
-//                        e.printStackTrace();
-//                    }
-//                    mHandler.post(mRunnable);
-//                }
-
             }
 
         }else

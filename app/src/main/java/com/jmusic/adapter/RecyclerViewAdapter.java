@@ -139,7 +139,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     @Override
                     public void onClick(View v) {
                         EventBusUtil.sendStickyEvent(new MessageEvent(C.EventCode.PLAYINFO,dataList.get(position)));
-                        DaoHelper.insert(jclassChange(dataList.get(position), PlayListConfig.historyList,null));
+                        PlayListInfo playListInfo=DaoHelper.searchwithForm(dataList.get(position).getId(),PlayListConfig.historyList);
+                        if(playListInfo==null)
+                        {
+                            DaoHelper.insertOrReplace(jclassChange(dataList.get(position), PlayListConfig.historyList,null));
+                        }
                         ARouter.getInstance().build(Constance.ACTIVITY_URL_PLAYMUSIC)
                                 .withTransition(R.anim.slide_in_bottom,0)
                                 .navigation(context);

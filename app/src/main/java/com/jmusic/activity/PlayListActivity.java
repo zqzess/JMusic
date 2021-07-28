@@ -32,6 +32,9 @@ public class PlayListActivity extends BaseActivity {
     ListView listView;
     @BindView(R.id.activity_playlist_topbar_name)
     TextView tv_name;
+    @BindView(R.id.activity_playlist_topbar_back)
+    TextView btn_back;
+
     List<PlayListInfo> list;
     PlayListAdapter adapter;
     String playListName;
@@ -48,6 +51,12 @@ public class PlayListActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override

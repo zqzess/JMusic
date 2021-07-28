@@ -57,10 +57,10 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 if (buildType.name.toLowerCase().contains("release")) {
-                    def fileName = "../apk/release/JMusic-${defaultConfig.versionName}_DATE-${buildTime()}.apk"
+                    def fileName = "../apk/release/JMusic-v${defaultConfig.versionName}_DATE-${buildTime()}.apk"
                     outputFileName = fileName
                 } else {
-                    def fileName = "../../../../build/debug/JMusic-${defaultConfig.versionName}-debug.apk"
+                    def fileName = "../../../../build/debug/JMusic-v${defaultConfig.versionName}-debug.apk"
                     outputFileName = fileName
                 }
             }

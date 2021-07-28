@@ -77,7 +77,7 @@ public class SettingActivity extends BaseActivity {
         String cacheSize = SPlayer.instance().getCacheSize();
         btn_show_cache.setmLeftText("清理缓存");
         btn_show_cache.setmRightText(cacheSize);
-        btn_show_update.setmLeftText("当前版本号:"+versionName);
+        btn_show_update.setmLeftText("当前版本号: v"+versionName);
         btn_show_update.setmRightText("检查更新");
         clickEvent();
     }

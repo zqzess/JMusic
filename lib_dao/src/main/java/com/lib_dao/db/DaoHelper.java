@@ -89,13 +89,12 @@ public class DaoHelper {
     public static PlayListInfo searchwithFavouriteForm(long musicId)
     {
         PlayListInfo info=playListInfoDao.queryBuilder().where(PlayListInfoDao.Properties.Form.eq(PlayListConfig.favouriteList),PlayListInfoDao.Properties.MusicId.eq(musicId)).build().unique();
-//        if(info.getId()!=null)
-//        {
-//            return info.getId();
-//        }else
-//        {
-//            return null;
-//        }
+
+        return info;
+    }
+    public static PlayListInfo searchwithForm(long musicId,String form)
+    {
+        PlayListInfo info=playListInfoDao.queryBuilder().where(PlayListInfoDao.Properties.Form.eq(form),PlayListInfoDao.Properties.MusicId.eq(musicId)).build().unique();
         return info;
     }
 }

@@ -177,7 +177,7 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
 
         //TODO 网络请求歌曲播放链接
         NetString.setAudioUrl("/"+id);
-        if(mCache.getAsString("audiourl&"+id)==null)
+        if(mCache.getAsString("audiourl&"+id)==null||mCache.getAsString("audiourl&"+id).equals(""))
         {
             NetString.setAudioUrl("/"+id);
             HttpRequest.netGetAudioUrlGzip(context,NetString.getAudioUrl(),id,ErrCode.NETERRCODE);
@@ -305,7 +305,7 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
         {
             if(!SPlayer.instance().isPlaying()|| (SPlayer.instance().isPlaying()&&id != PlayConfig.playingId))
             {
-                //不在播放
+                //在播放
                 SPlayer.instance()
                         .useWakeMode(false)//是否使用环形锁,默认不使用
                         .useWifiLock(false)//是否使用wifi锁,默认不使用
@@ -318,21 +318,39 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
                                 tv_time.setText(timeall);
                                 String timeend=PlayConfig.timeEndCount();
                                 tv_timeend.setText(timeend);
-                                mediaPlayer.start();
-                                mLyricView.resume();
+                                seekBar.setMax(PlayConfig.mediaPlayer.getDuration());
+//                                mediaPlayer.start();
+//                                mLyricView.resume();
                                 if(!PlayConfig.isPlaying&&id == PlayConfig.playingId)
                                 {
                                     //还原上次播放进度
                                     PlayConfig.mediaPlayer.seekTo(PlayConfig.currentPosition);
-                                    PlayConfig.currentPosition=0;
+                                    seekBar.setProgress(PlayConfig.currentPosition);
+//                                    PlayConfig.currentPosition=0;
                                 }else if(!PlayConfig.isPlaying&&id!=PlayConfig.playingId)
                                 {
+                                    mediaPlayer.start();
+                                    mLyricView.resume();
                                     PlayConfig.currentPosition=0;
+                                    PlayConfig.isPlaying=true;
+                                    PlayConfig.playFlag=1;
+                                    PlayConfig.playingId =id;
+                                    btn_main.setBackground(context.getResources().getDrawable(R.drawable.ic_pause));
+//                                    mHandler.post(mRunnable);
+                                }else if(PlayConfig.isPlaying&&id!=PlayConfig.playingId)
+                                {
+                                    mediaPlayer.start();
+                                    mLyricView.resume();
+                                    PlayConfig.currentPosition=0;
+                                    PlayConfig.isPlaying=true;
+                                    PlayConfig.playFlag=1;
+                                    PlayConfig.playingId =id;
+                                    btn_main.setBackground(context.getResources().getDrawable(R.drawable.ic_pause));
                                 }
-                                PlayConfig.isPlaying=true;
-                                PlayConfig.playFlag=1;
-                                PlayConfig.playingId =id;
-                                btn_main.setBackground(context.getResources().getDrawable(R.drawable.ic_pause));
+//                                PlayConfig.isPlaying=true;
+//                                PlayConfig.playFlag=1;
+//                                PlayConfig.playingId =id;
+//                                btn_main.setBackground(context.getResources().getDrawable(R.drawable.ic_pause));
                                 mHandler.post(mRunnable);
                             }
 
@@ -365,6 +383,7 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
                         });
             }
             else if (SPlayer.instance().isPlaying()&&id == PlayConfig.playingId){
+                //保持原样
                 String timeall=PlayConfig.timeAllCount();
                 PlayConfig.playFlag=1;
                 tv_time.setText(timeall);
@@ -372,19 +391,78 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
             }
         }else if(PlayConfig.playFlag==3)
         {
-            String timeall=PlayConfig.timeAllCount();
-            tv_time.setText(timeall);
-            String timeend=PlayConfig.timeEndCount();
-            tv_timeend.setText(timeend);
-            seekBar.setProgress(PlayConfig.currentPosition);
+            try{
+                String timeall=PlayConfig.timeAllCount();
+                tv_time.setText(timeall);
+                String timeend=PlayConfig.timeEndCount();
+                tv_timeend.setText(timeend);
+                seekBar.setProgress(PlayConfig.currentPosition);
+                mHandler.post(mRunnable);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
             if(!PlayConfig.isPlaying&&id == PlayConfig.playingId)
             {
                 //还原上次播放进度
                 PlayConfig.mediaPlayer.seekTo(PlayConfig.currentPosition);
-                PlayConfig.currentPosition=0;
+
+            }else if(id != PlayConfig.playingId)
+            {
+                //当前播放歌曲id与传入id不符
+                SPlayer.instance()
+                        .useWakeMode(false)//是否使用环形锁,默认不使用
+                        .useWifiLock(false)//是否使用wifi锁,默认不使用
+                        .setUseCache(true)//是否使用缓存,默认开启
+                        .playByUrl(audioUrl, new PlayerListener() {
+                            @Override
+                            public void LoadSuccess(SMediaPlayer mediaPlayer) {
+                                mediaPlayer.start();
+                                PlayConfig.mediaPlayer=SPlayer.instance().getMediaPlayer();
+                                mLyricView.resume();
+                                PlayConfig.isPlaying=true;
+                                PlayConfig.playingId =id;
+                                PlayConfig.currentPosition=0;
+                                btn_main.setBackground(context.getResources().getDrawable(R.drawable.ic_pause));
+                                String timeall=PlayConfig.timeAllCount();
+                                tv_time.setText(timeall);
+                                String timeend=PlayConfig.timeEndCount();
+                                tv_timeend.setText(timeend);
+                                seekBar.setProgress(PlayConfig.currentPosition);
+                                PlayConfig.playFlag=1;
+                                mHandler.post(mRunnable);
+                            }
+
+                            @Override
+                            public void Loading(SMediaPlayer mediaPlayer, int i) {
+
+                            }
+
+                            @Override
+                            public void onCompletion(SMediaPlayer mediaPlayer) {
+                                if(PlayConfig.isSingle)
+                                {
+                                    mediaPlayer.start();
+                                    mLyricView.resume();
+                                    mediaPlayer.seekTo(0);
+                                }else if(PlayConfig.isSingleList)
+                                {
+
+                                }else if(PlayConfig.isRandomList)
+                                {
+
+                                }
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Toast.makeText(context, ErrCode.PLAYERRCODE, Toast.LENGTH_SHORT).show();
+                            }
+
+                        });
+
             }
-            PlayConfig.playFlag=1;
-            mHandler.post(mRunnable);
         }
 
     }
@@ -481,6 +559,11 @@ public class PlayMusicActivity extends BaseActivity implements View.OnClickListe
                                         PlayConfig.isPlaying=true;
                                         PlayConfig.playFlag=1;
                                         PlayConfig.playingId =id;
+                                        PlayConfig.playNow=music;
+                                        SharedPreferencesUtil.putLong(context,"id",id,"playinginfo");
+                                        SharedPreferencesUtil.put(context,"name",music.getName(),"playinginfo");
+                                        SharedPreferencesUtil.put(context,"author",music.getArtist(),"playinginfo");
+                                        SharedPreferencesUtil.put(context,"pic",music.getAlbumPic(),"playinginfo");
                                         mHandler.post(mRunnable);
                                     }
 
